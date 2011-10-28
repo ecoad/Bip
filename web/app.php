@@ -3,12 +3,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Bip\Service as BipService;
 
-require_once __DIR__ . '/silex.phar';
+require_once __DIR__ . '/../silex.phar';
 
 $app = new Silex\Application();
 $app['debug'] = true;
 $app['autoloader']->registerNamespaceFallbacks(array(
-    __DIR__ . '/src',
+    __DIR__ . '/../src',
 ));
 
 $app['bip.service'] = function () use($app) {
@@ -20,10 +20,10 @@ $app['bip.service'] = function () use($app) {
 $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
     'db.options' => array(
         'driver' => 'pdo_sqlite',
-        'path' => __DIR__ . '/app.db',
+        'path' => __DIR__ . '/../app.db',
     ),
-    'db.dbal.class_path'    => __DIR__ . '/vendor/doctrine/dbal/lib',
-    'db.common.class_path'  => __DIR__ . '/vendor/doctrine/common/lib'
+    'db.dbal.class_path'    => __DIR__ . '/../vendor/doctrine/dbal/lib',
+    'db.common.class_path'  => __DIR__ . '/../vendor/doctrine/common/lib'
 ));
 
 $app->get('/update', function (Request $request) use ($app) {
