@@ -5,3 +5,10 @@ Speedily share your location and pair with others
 
 == Installation ==
 * Install vendors: vendors.sh 
+
+== Libraries Used ==
+* Silex
+* Doctrine 2 DBAL and Common
+* Twig - There's not much need for this if I'm honest
+* Google Maps V3
+* Backbone.js
