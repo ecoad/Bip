@@ -47,11 +47,15 @@ function loadPositions() {
         $.ajax({
           url: "http://furnace.bip.coad.me/update",
           dataType: 'json',
-          data: {id: name, coords: [position.coords.latitude, position.coords.longitude], accuracy: position.coords.accuracy},
+          data: {
+	          person: name, 
+	          coords: [position.coords.latitude, position.coords.longitude], 
+	          accuracy: position.coords.accuracy
+	      },
           success: function(response) {
             var person;
-            for (var key in response ) {
-              person = response[key];
+            for (var key in response.bips ) {
+              person = response.bips[key];
 
               var personLatlng = new google.maps.LatLng(person.Lat, person.Lon);
            

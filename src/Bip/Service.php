@@ -35,8 +35,8 @@ class Service {
 
         $this->container['db']->update('Location', 
             array(
-                'Lat' => $coords['lat'], 
-                'Lon' => $coords['lon'], 
+                'Lat' => $coords[0], 
+                'Lon' => $coords[1], 
                 'Accuracy' => $request->get('accuracy'), 
                 'LastUpdate' => time()
             ), 

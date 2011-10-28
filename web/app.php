@@ -9,11 +9,16 @@ $app = new Silex\Application();
 $app['debug'] = true;
 $app['autoloader']->registerNamespace('Bip', __DIR__ . '/../src');
 
-$app['bip.service'] = function () use($app) {
+$app['bip.service'] = function () use ($app) {
     $bipService = new BipService();
     $bipService->setContainer($app);
     return $bipService;
 };
+
+$app->register(new Silex\Provider\TwigServiceProvider(), array(
+    'twig.path' => __DIR__ . '/../templates',
+    'twig.class_path' => __DIR__ . '/../vendor/twig/lib',
+));
 
 $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
     'db.options' => array(
@@ -38,8 +43,8 @@ $app->get('/update', function (Request $request) use ($app) {
     );
 });
 
-$app->get('/', function () {
-    return new Response('TODO: Currently converting prototype into Twig and Backbone.js');
+$app->get('/', function () use ($app) {
+    return $app['twig']->render('index.html.twig');
 });
 
 $app->run();
