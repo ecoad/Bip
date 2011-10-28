@@ -22,8 +22,8 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
         'driver' => 'pdo_sqlite',
         'path' => __DIR__ . '/app.db',
     ),
-    'db.dbal.class_path'    => __DIR__ . '/vendor/doctrine2-dbal/lib',
-    'db.common.class_path'  => __DIR__ . '/vendor/doctrine2-common/lib'
+    'db.dbal.class_path'    => __DIR__ . '/vendor/doctrine/dbal/lib',
+    'db.common.class_path'  => __DIR__ . '/vendor/doctrine/common/lib'
 ));
 
 $app->get('/update', function (Request $request) use ($app) {
