@@ -40,4 +40,8 @@ $app->get('/update', function (Request $request) use ($app) {
     );
 });
 
+$app->get('/', function () {
+    return new Response('TODO: Currently converting prototype into Twig and Backbone.js');
+});
+
 $app->run();
