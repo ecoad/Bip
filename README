@@ -1,4 +1,7 @@
 Speedily share your location and pair with others
-* Needs to be super lightweight for instant access
+* Super lightweight for lightning access to functionality
 * Cross platform, PC/Tablet/Smart phones
-* Once the app asks who you are and who you want to track, there is no more input needed on subsequent uses
+* Minimal human interface required. Give yourself a unique name and put in the unique names you want to track
+
+== Installation ==
+* Install vendors: vendors.sh 
