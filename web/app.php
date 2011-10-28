@@ -7,9 +7,7 @@ require_once __DIR__ . '/../silex.phar';
 
 $app = new Silex\Application();
 $app['debug'] = true;
-$app['autoloader']->registerNamespaceFallbacks(array(
-    __DIR__ . '/../src',
-));
+$app['autoloader']->registerNamespace('Bip', __DIR__ . '/../src');
 
 $app['bip.service'] = function () use($app) {
     $bipService = new BipService();
