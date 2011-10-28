@@ -65,9 +65,17 @@ function loadPositions() {
                   map: map, 
                   animation: google.maps.Animation.DROP,
                   labelContent: person.Person + "(" + person.TimeSince + ")",
-                  labelAnchor: new google.maps.Point(22, 0),
+                  labelAnchor: new google.maps.Point(22, -10),
                   labelClass: "labels", // the CSS class for the label
-                  labelStyle: {opacity: 1}
+                  labelStyle: {
+                    opacity: 1, 
+                    'font-family': 'Verdana', 
+                    'font-size': '12px',
+                    'background-color': '#69F56C',
+                    'padding': '3px',
+                    '-moz-border-radius': '5px',
+                    'border-radius': '5px',
+                  }
               });
 
               var infowindow = new google.maps.InfoWindow({
