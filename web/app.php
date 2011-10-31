@@ -43,6 +43,19 @@ $app->get('/update', function (Request $request) use ($app) {
     );
 });
 
+$app->get('/get', function (Request $request) use ($app) {
+    $bipService = $app['bip.service'];
+    
+    $responseData = new stdClass();
+    $responseData->bips = $bipService->getBips($request);
+
+    return new Response(
+        json_encode($responseData),
+        200,
+        array('Content-Type' => 'application/json')
+    );
+});
+
 $app->get('/', function () use ($app) {
     return $app['twig']->render('index.html.twig');
 });
