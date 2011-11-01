@@ -28,19 +28,16 @@ class Service {
     /**
      * Persist the location of the given user
      * 
-     * @param Request $request
+     * @param array $data
      */
-    public function updatePosition(Request $request) {
-        $coords = $request->get('coords');
+    public function updatePosition(array $data) {
+        $data = $data;
+        $data['LastUpdate'] = time();
 
-        $this->container['db']->update('Location', 
-            array(
-                'Lat' => $coords[0], 
-                'Lon' => $coords[1], 
-                'Accuracy' => $request->get('accuracy'), 
-                'LastUpdate' => time()
-            ), 
-            array('Person' => $request->get('person'))
+        $this->container['db']->update(
+            'Location', 
+            $data, 
+            array('Person' => $data['Person'])
         );
     }
 

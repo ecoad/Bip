@@ -43,14 +43,24 @@ $app->get('/update', function (Request $request) use ($app) {
     );
 });
 
-$app->get('/get', function (Request $request) use ($app) {
+$app->get('/bips', function (Request $request) use ($app) {
     $bipService = $app['bip.service'];
-    
-    $responseData = new stdClass();
-    $responseData->bips = $bipService->getBips($request);
 
     return new Response(
-        json_encode($responseData),
+        json_encode($bipService->getBips($request)),
+        200,
+        array('Content-Type' => 'application/json')
+    );
+});
+
+$app->post('/bips', function (Request $request) use ($app) {
+    $postData = json_decode(stripslashes(file_get_contents('php://input')));
+
+    $bipService = $app['bip.service'];
+    $bipService->updatePosition((array)$postData);
+
+    return new Response(
+        $postData->Person,
         200,
         array('Content-Type' => 'application/json')
     );
