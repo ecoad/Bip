@@ -2,52 +2,29 @@
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Bip\Service as BipService;
+use Bip\Repository as BipRepository;
 
 require_once __DIR__ . '/../silex.phar';
 
 $app = new Silex\Application();
 $app['debug'] = true;
 $app['autoloader']->registerNamespace('Bip', __DIR__ . '/../src');
+$app['db.driver'] = 'sqlite';
+$app['db.path'] = __DIR__ . '/../bips.db';
 
-$app['bip.service'] = function () use ($app) {
+$app['bip.service'] = function() use ($app) {
     $bipService = new BipService();
-    $bipService->setContainer($app);
-    return $bipService;
+    return $bipService->setContainer($app);
 };
 
-$app->register(new Silex\Provider\TwigServiceProvider(), array(
-    'twig.path' => __DIR__ . '/../templates',
-    'twig.class_path' => __DIR__ . '/../vendor/twig/lib',
-));
+$app['bip.repository'] = function() use ($app) {
+    $repository = new BipRepository();
+    return $repository->setContainer($app);
+};
 
-$app->register(new Silex\Provider\DoctrineServiceProvider(), array(
-    'db.options' => array(
-        'driver' => 'pdo_sqlite',
-        'path' => __DIR__ . '/../app.db',
-    ),
-    'db.dbal.class_path'    => __DIR__ . '/../vendor/doctrine/dbal/lib',
-    'db.common.class_path'  => __DIR__ . '/../vendor/doctrine/common/lib'
-));
-
-$app->get('/update', function (Request $request) use ($app) {
-    $bipService = $app['bip.service'];
-    $bipService->updatePosition($request);
-    
-    $responseData = new stdClass();
-    $responseData->bips = $bipService->getBips($request);
-
+$app->get('/bips/{group}', function (Request $request, $group) use ($app) {
     return new Response(
-        json_encode($responseData),
-        200,
-        array('Content-Type' => 'application/json')
-    );
-});
-
-$app->get('/bips', function (Request $request) use ($app) {
-    $bipService = $app['bip.service'];
-
-    return new Response(
-        json_encode($bipService->getBips($request)),
+        json_encode($app['bip.service']->getBipsByGroup($group)),
         200,
         array('Content-Type' => 'application/json')
     );
@@ -57,7 +34,7 @@ $app->post('/bips', function (Request $request) use ($app) {
     $postData = json_decode(stripslashes(file_get_contents('php://input')));
 
     $bipService = $app['bip.service'];
-    $bipService->updatePosition((array)$postData);
+    $bipService->setPosition((array)$postData);
 
     return new Response(
         $postData->Person,
@@ -66,8 +43,12 @@ $app->post('/bips', function (Request $request) use ($app) {
     );
 });
 
+$app->get('/db-devel', function () use ($app) {
+    $app['bip.repository']->devel();
+});
+
 $app->get('/', function () use ($app) {
-    return $app['twig']->render('index.html.twig');
+    return new Response('hi');
 });
 
 $app->run();

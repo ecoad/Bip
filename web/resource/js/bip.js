@@ -28,7 +28,7 @@ $(function() {
               center: myLatLng,
               mapTypeId: google.maps.MapTypeId.ROADMAP
             }
-
+            
             map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 
             bips.each(function (bip) {
@@ -49,6 +49,8 @@ $(function() {
 
     function updateLocalBip() {
         var localBip = new Bip;
+        delete localStorage.name;
+        //localStorage.group = null;
         if (!hasName()) {
             getName();
         }

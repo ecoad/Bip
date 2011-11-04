@@ -1,7 +1,6 @@
 <?php
 namespace Bip;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use \Pimple;
 
@@ -20,9 +19,11 @@ class Service {
      * Set the DI service container
      *
      * @param Pimple $container
+     * @return Service;
      */
     public function setContainer(Pimple $container) {
         $this->container = $container;
+        return $this;
     }
 
     /**
@@ -30,9 +31,14 @@ class Service {
      * 
      * @param array $data
      */
-    public function updatePosition(array $data) {
+    public function setPosition(array $data) {
         $data = $data;
         $data['LastUpdate'] = time();
+
+        $queryBuilder = $this->container['db']->createQueryBuilder('p'); exit;
+
+        $result = $this->container['db']->fetchOneByPerson($data['Person']);
+        var_dump($result); exit;
 
         $this->container['db']->update(
             'Location', 
@@ -41,13 +47,21 @@ class Service {
         );
     }
 
+    public function getBipByPerson($person) {
+        
+        $bip = $this->container['bip.repository']->getByUsername($username);
+        if ($bip) {
+            
+        }
+    }
+
     /**
      * Get the Bips
      * 
      * @return array Bips
      */
-    public function getBips() {
-        $results = $this->container['db']->fetchAll('SELECT * FROM Location');
+    public function getBipsByGroup($group) {
+        $results = $this->container['bip.repository']->fetchAllByGroup($group);
 
         foreach ($results as &$result) {
             $result['TimeSince'] = $this->getFormattedTimeSince($result);
