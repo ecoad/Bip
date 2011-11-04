@@ -11,7 +11,7 @@ use \Pimple;
  */
 class Service {
     /**
-     * @var ContainerInterface $container
+     * @var Pimple $container
      */
     protected $container;
 
@@ -32,27 +32,10 @@ class Service {
      * @param array $data
      */
     public function setPosition(array $data) {
-        $data = $data;
-        $data['LastUpdate'] = time();
+        $bip = $this->mapDataToBip($data);
+        $bip->setLastUpdate(time());
 
-        $queryBuilder = $this->container['db']->createQueryBuilder('p'); exit;
-
-        $result = $this->container['db']->fetchOneByPerson($data['Person']);
-        var_dump($result); exit;
-
-        $this->container['db']->update(
-            'Location', 
-            $data, 
-            array('Person' => $data['Person'])
-        );
-    }
-
-    public function getBipByPerson($person) {
-        
-        $bip = $this->container['bip.repository']->getByUsername($username);
-        if ($bip) {
-            
-        }
+        $this->container['bip.service']->updateBip($data);
     }
 
     /**
@@ -61,7 +44,7 @@ class Service {
      * @return array Bips
      */
     public function getBipsByGroup($group) {
-        $results = $this->container['bip.repository']->fetchAllByGroup($group);
+        $results = $this->container['bip.repository.bip']->fetchAllByGroup($group);
 
         foreach ($results as &$result) {
             $result['TimeSince'] = $this->getFormattedTimeSince($result);
@@ -81,11 +64,37 @@ class Service {
                 break;
             case $timeSince < (60 * 60):
                 $timeSinceMins = round($timeSince / 60);
-                return "$timeSinceMins mins ago ";
+                return "$timeSinceMins mins ago";
                 break;
             default:
                 $timeSinceHours = round(($timeSince / 60) / 60);
                 return "$timeSinceHours hours ago";
         }
+    }
+
+    /**
+     * Map an array of key value pairs to Bip
+     * 
+     * @param $data
+     * @return Bip
+     */
+    protected function mapDataToBip(array $data) {
+        $bip = $this->container['bip.entity.bip'];
+        foreach ($data as $fieldName => $value) {
+            $john = 'setId';
+            $method = 'set' . $fieldName;
+            $bip->$method($value);
+        }
+
+        var_dump($bip->getEmailAddress()); exit;
+        /*
+        $bip->setId($data['Id']);
+        $bip->setName($data['Name']);
+        $bip->setEmailAddress($data['EmailAddress']);
+        $bip->setLat($data['Lat']);
+        $bip->setLon($data['Lon']);
+        $bip->setAccuracy($data['Accuracy']);
+        */
+        return $bip;
     }
 }

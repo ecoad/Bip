@@ -2,7 +2,8 @@
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Bip\Service as BipService;
-use Bip\Repository as BipRepository;
+use Bip\Repository\BipRepository;
+use Bip\Entity\Bip as Bip;
 
 require_once __DIR__ . '/../silex.phar';
 
@@ -17,9 +18,13 @@ $app['bip.service'] = function() use ($app) {
     return $bipService->setContainer($app);
 };
 
-$app['bip.repository'] = function() use ($app) {
+$app['bip.repository.bip'] = function() use ($app) {
     $repository = new BipRepository();
     return $repository->setContainer($app);
+};
+
+$app['bip.entity.bip'] = function() use ($app) {
+    return new Bip();
 };
 
 $app->get('/bips/{group}', function (Request $request, $group) use ($app) {

@@ -1,13 +1,13 @@
 <?php
-namespace Bip;
+namespace Bip\Repository;
 
 use \PDO;
 use \PDOException;
 use \Pimple;
 
-class Repository {
+abstract class AbstractRepository {
     /**
-     * @var ContainerInterface $container
+     * @var Pimple $container
      */
     protected $container;
 
@@ -27,11 +27,20 @@ class Repository {
         return $this;
     }
 
+    /**
+     * Connect to database
+     * 
+     * @return Repository
+     */
     public function connect() {
         $this->connection = new PDO($this->container['db.driver'] . ':' . $this->container['db.path']);
         $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        return $this;
     }
 
+    /**
+     * TEMPORARY
+     */
     public function devel() {
         if (!$this->connection) {
             $this->connect();
@@ -44,14 +53,42 @@ class Repository {
         }
     }
 
-
+    /**
+     * Retrieve Bips by providing a group name
+     *
+     * @param string $group
+     * @return array Bips
+     */
     public function fetchAllByGroup($group) {
         $sql = 'SELECT * FROM Bip WHERE "Group" = ?';
         $results = $this->fetchArrayByQuery($sql, array($group));
         return $results;
     }
 
-    public function fetchArrayByQuery($sql, array $params) {
+    /**
+     * Retrieve a Bip by providing a name
+     *
+     * @param string $group
+     * @return array Bips
+     */
+    public function fetchOneByName($name) {
+        $sql = 'SELECT * FROM Bip WHERE "Name" = ? LIMIT 1';
+        $results = $this->fetchArrayByQuery($sql, array($name));
+        if (count($results) != 1) {
+            return null;
+        }
+        return $results[0];
+    }
+
+    /**
+     * Retrieve array of results by query and params
+     * 
+     * @param string $sql
+     * @param array $params
+     *
+     * @return array $results
+     */
+    public function fetchArrayByQuery($sql, array $params = array()) {
         if (!$this->connection) {
             $this->connect();
         }
@@ -71,30 +108,5 @@ class Repository {
         }
 
         return $results;
-    }
-
-    public function fetchOneByName($name) {
-        exit;
-    }
-
-    public function getByUsername($username) {
-        $username = strtolower($username);
-
-        if (!$this->connection) {
-            $this->connect();
-        }
-
-        $result = $this->connection->query('SELECT * FROM Location');
-        foreach ($result as $bip) {
-            var_dump($bip);
-        }
-        exit;
-        
-        $this->retrieve(array("username" => $username));
-
-        $results = $this->container['db']->fetchArray(
-            "SELECT * FROM {$this->repositoryName} WHERE username = {$username} LIMIT 1");
-        
-        var_dump($results); exit;
     }
 }
