@@ -35,7 +35,7 @@ class Service {
         $bip = $this->container['bip.entityMapper.bip']->mapEntity($data);
         $bip->setLastUpdate(time());
 
-        $this->container['bip.repository.bip']->updateBip($bip);
+        $this->container['bip.repository.bip']->persist($bip);
         return $this;
     }
 
