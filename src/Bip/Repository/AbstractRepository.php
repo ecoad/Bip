@@ -6,6 +6,7 @@ use \PDOException;
 use \Pimple;
 
 abstract class AbstractRepository {
+
     /**
      * @var Pimple $container
      */
@@ -15,6 +16,13 @@ abstract class AbstractRepository {
      * @param PDO $connection
      */
     protected $connection;
+
+    /**
+     * @param Pimple $container
+     */
+    public function __construct(Pimple $container) {
+        $this->setContainer($container);
+    }
 
     /**
      * Set the DI service container
@@ -54,33 +62,6 @@ abstract class AbstractRepository {
     }
 
     /**
-     * Retrieve Bips by providing a group name
-     *
-     * @param string $group
-     * @return array Bips
-     */
-    public function fetchAllByGroup($group) {
-        $sql = 'SELECT * FROM Bip WHERE "Group" = ?';
-        $results = $this->fetchArrayByQuery($sql, array($group));
-        return $results;
-    }
-
-    /**
-     * Retrieve a Bip by providing a name
-     *
-     * @param string $group
-     * @return array Bips
-     */
-    public function fetchOneByName($name) {
-        $sql = 'SELECT * FROM Bip WHERE "Name" = ? LIMIT 1';
-        $results = $this->fetchArrayByQuery($sql, array($name));
-        if (count($results) != 1) {
-            return null;
-        }
-        return $results[0];
-    }
-
-    /**
      * Retrieve array of results by query and params
      * 
      * @param string $sql
@@ -93,18 +74,17 @@ abstract class AbstractRepository {
             $this->connect();
         }
 
-        try {
-            $query = $this->connection->prepare($sql);
-            $query->execute($params);
-        } catch (PDOException $exception) {
-            echo $exception->getMessage(); exit;
-        }
+
+        $query = $this->connection->prepare($sql);
+        $query->execute($params);
 
         $query->setFetchMode(PDO::FETCH_ASSOC);
 
         $results = array();
+        $entityMapper = $this->container['bip.entityMapper.bip'];
+
         while ($result = $query->fetch()) {
-            $results[] = $result;
+            $results[] = $entityMapper->mapEntity($result);
         }
 
         return $results;

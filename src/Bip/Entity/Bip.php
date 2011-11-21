@@ -1,6 +1,8 @@
 <?php
 namespace Bip\Entity;
 
+use \stdClass;
+
 class Bip {
 	/**
 	 * @var integer $id
@@ -42,6 +44,11 @@ class Bip {
 	 */
 	protected $group;
 
+	/**
+	 * Description of time since last update
+	 */
+	protected $timeSince;
+
 	public function __call($callName, array $params) {
 		switch (true) {
 			case substr($callName, 0, 3) === "get":
@@ -52,6 +59,29 @@ class Bip {
 				$property = lcfirst(substr($callName, 3));
 				$this->$property = $params[0];
 				break;
+			default:
+				trigger_error(sprintf('Call to undefined function: %s::%s().', get_class($this), $callName), 
+					E_USER_ERROR);
+				break;
 		}
+	}
+
+	public function getTimeSince() {
+		//TODO
+		return '99 hours';
+	}
+
+	/**
+	 * Return a plain object to allow serialisation, such as JSON
+	 * @return stdClass
+	 */
+	public function getPlainObject() {
+		$object = new stdClass();
+		foreach ($this as $property => $value) {
+			$getter = 'get' . ucfirst($property);
+			$object->$property = $this->$getter();
+		}
+
+		return $object;
 	}
 }
