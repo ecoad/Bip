@@ -36,27 +36,25 @@ class Service {
         $bip->setLastUpdate(time());
 
         $this->container['bip.service']->updateBip($data);
+        return $this;
     }
 
     /**
      * Get the Bips
      * 
      * @return array Bips
+     * @return Service;
      */
     public function getBipsByGroup($group) {
         $results = $this->container['bip.repository.bip']->fetchAllByGroup($group);
-
-        foreach ($results as &$result) {
-            $result['TimeSince'] = $this->getFormattedTimeSince($result);
-        }
         return $results;
     }
 
-    protected function getTimeSince(array $bip) {
-        return time() - $bip['LastUpdate'];
+    protected function getTimeSince(Bip $bip) {
+        return time() - $bip->getLastUpdate();
     }
 
-    protected function getFormattedTimeSince(array $bip) {
+    protected function getFormattedTimeSince(Bip $bip) {
         $timeSince = $this->getTimeSince($bip);
         switch (true) {
             case $timeSince < 60:
@@ -73,6 +71,21 @@ class Service {
     }
 
     /**
+     * Return Bips as plain objects for serialisation
+     * 
+     * @param array $bips
+     * @return array Bips as plain objects
+     */
+    public function getBipsAsPlainObjects(array $bips) {
+        $plainObjects = array();
+
+        foreach ($bips as $bip) {
+            $plainObjects[] = $bip->getPlainObject();
+        }
+        return $plainObjects;
+    }
+
+    /**
      * Map an array of key value pairs to Bip
      * 
      * @param $data
@@ -86,15 +99,6 @@ class Service {
             $bip->$method($value);
         }
 
-        var_dump($bip->getEmailAddress()); exit;
-        /*
-        $bip->setId($data['Id']);
-        $bip->setName($data['Name']);
-        $bip->setEmailAddress($data['EmailAddress']);
-        $bip->setLat($data['Lat']);
-        $bip->setLon($data['Lon']);
-        $bip->setAccuracy($data['Accuracy']);
-        */
         return $bip;
     }
 }
