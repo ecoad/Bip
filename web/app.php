@@ -48,7 +48,7 @@ $app->post('/bip', function (Request $request) use ($app) {
     $bipService->setPosition((array)$postData);
 
     return new Response(
-        $postData->Person,
+        'ok',
         200,
         array('Content-Type' => 'application/json')
     );
