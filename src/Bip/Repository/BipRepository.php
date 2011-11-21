@@ -37,15 +37,38 @@ class BipRepository extends AbstractRepository {
         return $results[0];
     }
 
-    public function updateBip(Bip $bip) {
+
+    public function persist(Bip $bip) {
         if ($persistedBip = $this->fetchOneByName($bip->getName())) {
             $sql = <<<SQL
-UPDATE {$this->table} SET Lat = ?, Lon = ?, Accuracy = ? WHERE Name = ?
+UPDATE {$this->table} SET Lat = :lat, Lon = :lon, Accuracy = :accuracy, LastUpdate = :lastUpdate WHERE Name = :name
 SQL;
             $query = $this->connection->prepare($sql);
-            $query->execute(array($bip->getLat(), $bip->getLon(), $bip->getAccuracy(), $bip->getName()));
-            $this->connection->exec($query);
+            $params = array(
+                ':lat' => $bip->getLat(), 
+                ':lon' => $bip->getLon(), 
+                ':accuracy' => $bip->getAccuracy(), 
+                ':lastUpdate' => $bip->getLastUpdate(),
+                ':name' => $bip->getName()
+            );
+        } else {
+            $sql = <<<SQL
+INSERT INTO {$this->table} ('Name', 'EmailAddress', 'Lat', 'Lon', 'Accuracy', 'LastUpdate', 'Group')
+    VALUES (:name, :emailAddress, :lat, :lon, :accuracy, :lastUpdate, :group)
+SQL;
+
+            $query = $this->connection->prepare($sql);
+            $params = array(
+                ':name' => $bip->getName(),
+                ':emailAddress' => $bip->getEmailAddress(),
+                ':lat' => $bip->getLat(),
+                ':lon' => $bip->getLon(),
+                ':accuracy' => $bip->getAccuracy(),
+                ':lastUpdate' => $bip->getlastUpdate(),
+                ':group' => $bip->getGroup()
+            );
         }
 
+        $query->execute($params);
     }
 }
