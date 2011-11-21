@@ -13,9 +13,14 @@ abstract class AbstractRepository {
     protected $container;
 
     /**
-     * @param PDO $connection
+     * @var PDO $connection
      */
     protected $connection;
+
+    /**
+     * @var string $table
+     */
+    protected $table;
 
     /**
      * @param Pimple $container

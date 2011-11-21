@@ -41,7 +41,7 @@ $app->get('/bips/{group}', function (Request $request, $group) use ($app) {
     );
 });
 
-$app->post('/bips', function (Request $request) use ($app) {
+$app->post('/bip', function (Request $request) use ($app) {
     $postData = json_decode(stripslashes(file_get_contents('php://input')));
 
     $bipService = $app['bip.service'];
@@ -60,7 +60,9 @@ $app->get('/db-devel', function () use ($app) {
 });
 
 $app->get('/', function () use ($app) {
-    return new Response('hi');
+    include __DIR__ . '/../views/index.php';
+    exit;
+    //return new Response();
 });
 
 $app->run();

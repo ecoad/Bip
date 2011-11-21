@@ -32,10 +32,10 @@ class Service {
      * @param array $data
      */
     public function setPosition(array $data) {
-        $bip = $this->mapDataToBip($data);
+        $bip = $this->container['bip.entityMapper.bip']->mapEntity($data);
         $bip->setLastUpdate(time());
 
-        $this->container['bip.service']->updateBip($data);
+        $this->container['bip.repository.bip']->updateBip($bip);
         return $this;
     }
 
